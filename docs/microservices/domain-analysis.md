@@ -63,3 +63,5 @@ Bounded contexts are not necessarily isolated from one another. The solid lines 
 In the book *Domain Driven Design* (Addison-Wesley, 2003), Eric Evans describes several patterns for maintaining the integrity of a domain model when it interacts with another bounded context. One of the main principles of microservices is that services communicate through well-defined APIs. This approach corresponds to two patterns that Evans calls Open Host Service and Published Language. The idea of Open Host Service is that a subsystem defines a formal protocol (API) that other subsystems use to communicate with it. Published Language extends this idea by publishing the API in a form that other teams can use to write clients. When we start designing our actual microservices, they will expose RESTful APIs that are described using the [OpenAPI Specification](https://www.openapis.org/specification/repo). 
 
 For the rest of this journey, we will focus on the Shipping bounded context. 
+
+Next: [Apply tactical DDD patterns](./tactical-ddd.md)

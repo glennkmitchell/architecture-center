@@ -83,10 +83,12 @@ Here are some reasons to break up a service:
 
 The development team settled on the following services:
 
-- Delivery scheduler. Receives client requests to schedule a delivery, and manages the workflow.
+- Delivery Scheduler. Receives client requests to schedule a delivery, and manages the workflow.
 - Package. Stores information about packages.
 - Delivery. Manages deliveries and tracks delivery status. This service generates status update events for each delivery.
-- Delivery history. Records the history of all deliveries.
+- Delivery History. Records the history of all deliveries.
  
  ![](./images/services.svg)
+
+The Delivery Scheduler service also depends on two services from other bounded contexts, namely Accounts and Drone Management. 
 
