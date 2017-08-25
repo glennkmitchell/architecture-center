@@ -34,7 +34,8 @@ In a microservices architecture, the application is composed of small, independe
 - Each service implements a single business capability.
 - Services run in separate processes, communicating through well-defined APIs or messaging patterns.
 - Services do not share data stores or data schemas. Each service is responsible for managing its own data. 
-- Services have separate code bases, and do not share source code. (They may use common utility libraries, however.) A small team of developers, typically 5 &ndash; 10 people, can write and maintain a service.
+- Services have separate code bases, and do not share source code. They may use common utility libraries, however.
+- Services are small. A small team of developers, typically 5 &ndash; 10 people, can write and maintain a service.
 - Services are deployed independently. 
 
 Done correctly, microservices can provide a number of useful benefits:
@@ -47,10 +48,11 @@ Done correctly, microservices can provide a number of useful benefits:
 
 These benefits don't come for free. Some of the challenges when adopting a microservices architecture include:
 
-- **Design**. What are the service boundaries? How big should a service be? How will services communicate?
-- **Team structure**. Can you successfully organize into small, semi-independent teams? Do you have a strong DevOps culture? 
-- **CI/CD**. You must have automated and robust CI/CD, so that you can reliably deploy the application into test and production environments.
-- **Testing**. The decentralized nature of building microservices requires new approaches to testing. During development, you will test an individual service against stubs or API contracts. Then perform integration testing in a production-like test environment (test cluster). Performance tests and load tests are also critical.
-- **Monitoring and telemetry**. A single client request may invoke multiple services. That makes it harder to get a holistic view of the system and understand the sources of bottlenecks and performance issues.
+- Design. What are the service boundaries? How big should a service be? How will services communicate?
+- Team structure. Can you successfully organize into small, semi-independent teams? Do you have a strong DevOps culture? 
+- CI/CD. You must have automated and robust CI/CD, so that you can reliably deploy the application into test and production environments.
+- Testing. The decentralized nature of building microservices requires new approaches to testing. During development, you will test an individual service against stubs or API contracts. Then perform integration testing in a production-like test environment (test cluster). Performance tests and load tests are also critical.
+- Monitoring and telemetry. A single client request may invoke multiple services. That makes it harder to get a holistic view of the system and understand the sources of bottlenecks and performance issues.
 
+Next: [Apply Domain Driven Design](./domain-analysis.md)
 

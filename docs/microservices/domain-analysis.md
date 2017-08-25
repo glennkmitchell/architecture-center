@@ -1,42 +1,43 @@
 # Apply Domain Driven Design 
 
-When designing microservices, one of the biggest challenges in define the service boundaries. The general rule is that a service should do "one thing" &mdash; but putting that rule into practice requires careful thought. 
+When designing microservices, one of the biggest challenges in define the exact boundaries of the individual services. The general rule is that a service should do "one thing" &mdash; but putting that rule into practice requires careful thought. 
 
 Here are two guiding principles:
 
 - Services should be designed around business capabilities, not horizontal layers such as data access or messaging.  
 - Services should have loose coupling and high functional cohesion. 
 
-Services are *loosely coupled* if you can make a change in one service without requiring other services to be updated at the same time. Later in this guidance we will discuss issues such API versioning, eventing, and other ways to keep services decoupled. A service is *cohesive* if it has a single, well-defined purpose, such as managing user accounts or tracking delivery history.  
+Services are *loosely coupled* if you can change one service without requiring other services to be updated at the same time. Later in this guidance we will discuss techniques such API versioning, eventing, and other ways to keep services decoupled. A service is *cohesive* if it has a single, well-defined purpose, such as managing user accounts or tracking delivery history. 
 
 However, there is no mechanical process that will produce the "right" design. You have to think deeply about your business domain, requirements, and goals. Moreover, the process is iterative and ongoing. A well-designed architecture will evolve over time. Service boundaries aren't fixed in stone. As the application evolves, you may refactor a service into several smaller services. 
 
-Domain driven design (DDD) is an approach to software design that starts by modeling the business domain.  A domain model is an abstract model of the domain. It distills and organizes domain knowledge, and provides a common language for developers and domain experts. 
+
+
+## Analyze the domain
+
+Before writing any code, you need a bird's eye view of the entire system that you are creating. Domain driven design (DDD) is an approach to software design that starts by modeling the business domain.  A domain model is an abstract model of the domain. It distills and organizes domain knowledge, and provides a common language for developers and domain experts. 
 
 A domain model must include behaviors and business rules &mdash; it's not just a data schema or an object graph. The domain model is not code. The application code conforms to the model, and expresses the model, but the model is logically separate from the implementation. (However, don't make the mistake of thinking that DDD has to follow a waterfall model, where the domain model is finalized before starting to implement. The domain model should evolve with the application.)
 
 Using a DDD approach will help you to design microservices so way that every service forms a natural fit to a functional business requirement. It can help you to avoid the trap of letting yoru design be dictated by organizational boundaries or technology choices &mdash; say, putting unrelated functionality into the same service simply because they both use a SQL database.
 
-## Analyze the domain
-
-Before writing any code, you need a bird's eye view of the entire system that you are creating. The journey begins with domain analysis.
-
-Start by mapping all of the business functions and their connections. This will likely be a collaborative effort that involves domain experts, software engineers, and other stakeholders. You don't need to use any particular formalism.  Sketch a diagram or draw on whiteboard.
+The journey begins with domain analysis. Start by mapping all of the business functions and their connections. This will likely be a collaborative effort that involves domain experts, software engineers, and other stakeholders. You don't need to use any particular formalism.  Sketch a diagram or draw on whiteboard.
 
 As you fill in the diagram, you may start of indentify discrete subdomains. Which functions are closely related? Which functions are core to the business, and which provide ancillary services? What is the dependency graph? 
 
 During this initial phase, you aren't concerned with technologies or implementation details. That said, you should note the place where the application will need to integrate with external systems, such as CRM, payment processing, or billing systems. 
 
-The following diagram shows the first analysis of the domain.
+After an initial domain analysis, the team came up with the following diagram that depicts the domain.
 
- 
+![](./images/ddd1.svg) 
 
-- Shipping is placed in the center of the diagram, because it's core to the business. The application will allow customers to schedule deliveries (using drones). Everything else in the diagram exists to enable this functionality.
-- Drone management is also core to the business. Functionality that is closely related to drone management include repairing drones and using predictive analysis to predict when drones will need servicing and maintenance. 
-- The end-to-end shipping scenario includes ETA analysis to provide estimates for pickup and delivery, and third-party transportation (such as truck or train) for deliveries that cannot be made entirely using drones.
-- Drone sharing is a possible extension of the core business - the company may have excess drone capacity during certain hours, and could rent out drones that would otherwise be idle. This feature will not be in v1 of the application.
-- Similarly, video surveillance is another area that the company might expand into at a later time.
-- Support services include user accounts, invoicing, and call center.
+
+- **Shipping** is placed in the center of the diagram, because it's core to the business. Everything else in the diagram exists to enable this functionality.
+- **Drone management** is also core to the business. Functionality that is closely related to drone management include **repairing drones** and using **predictive analysis** to predict when drones need servicing and maintenance. 
+- Closely related to shipping, **ETA analysis** provides time estimates for pickup and delivery. **Third-party transportation** will enable the application to schedule alternative transportation methods if the delivery cannot be made entirely via drone.
+- **Drone sharing** is a possible extension of the core business. The company may have excess drone capacity during certain hours, and could rent out drones that would otherwise be idle. This feature will not be in v1 of the application.
+- Similarly, **video surveillance** is another area that the company might expand into at a later time.
+- Support services include **user accounts**, **Call center**, and others.
  
 Notice that at this point we have not defined any objects in our design, or made any technology choices.
 
