@@ -92,7 +92,7 @@ The development team settled on the following services:
 
 The Delivery Scheduler service also depends on two services from other bounded contexts, namely Accounts and Drone Management. 
 
-## Mapping the tactical patterns to REST APIs
+## Map tactical patterns to REST APIs
 
 Patterns like entity, aggregate, and value object are designed to place certain constraints on the objects in your domain model. For example, value objects are meant to be immutable. In many discussions of DDD, the patterns are modeled using OO language concepts like constructors or property getters and setters. 
 
@@ -120,7 +120,7 @@ export class Location {
 
 Coding practices like this are particularly important in a more monolithic application. In a large code base, many subsystems might use the `Location` object, so it's important to enforce the correct behaviors of objects. Patterns such as Repository ensure that other parts of the code cannot make arbitrary writes to the data store.
 
-![](./images/repositorty.svg)
+![](./images/repository.svg)
 
 But in a microservices architecture, services don't share a code base. Instead, they communicate through APIs. Consider the case where the Delivery Scheduler service requests information about a drone from the Drone Management service. The Drone Management service will have an internal model of a drone, which is represented in code. But the Delivery Scheduler doesn't see that. Instead, what it sees is a wire representation of the entity &mdash; for example, JSON in an HTTP response body.
 
