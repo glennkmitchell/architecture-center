@@ -92,3 +92,53 @@ The development team settled on the following services:
 
 The Delivery Scheduler service also depends on two services from other bounded contexts, namely Accounts and Drone Management. 
 
+
+## Mapping the tactical patterns to REST APIs
+
+Patterns like entity, aggregate, and value object are designed to place certain constraints on the objects in your domain model. For example, value objects are meant to be immutable. In many discussions of DDD, the patterns are modeled using OO language concepts like constructors
+
+For example, here is a TypeScript implementation of a value object. The properties are declared to be read-only, so the only way to modify a Location is to create a new one. The properties are validated at the time the object is created.
+
+```ts
+export class Location {
+    readonly latitude: number;
+    readonly longitude: number;
+    readonly altitude: number;
+
+    constructor(latitude: number, longitude: number, altitude: number) {
+        if (latitude < -90 || latitude > 90) {
+            throw new RangeError('latitude must be between -90 and 90');
+        }
+        if (longitude < -180 || longitude > 180) {
+            throw new RangeError('longitude must be between -180 and 180');
+        }
+
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.altitude = altitude;
+    }
+}
+```
+
+
+
+
+
+Using REST APIs to model DDD concepts
+Aggregates are addressable by ID. The URL is the stable identifier
+
+    /api/orders/{id}
+
+Child entities can be navigated from the root:
+
+    /api/orders/{id}/items/{order_item_id}
+
+... or by HATEOS links in the representation
+
+Object properties are essentially value objects, because you update by replacing the value:
+
+    PUT /api/customer/{id}/address
+
+(or via PATCH)
+
+Business logic is encapsulated in the API, so the internal state of an aggregate is always consistent. You don't expose APIs that allow clients to manipulate internal state in an inconsistent way.

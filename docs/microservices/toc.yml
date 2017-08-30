@@ -1,0 +1,12 @@
+- name: Azure Architecture Center
+  href: ../index.md
+
+- name: Design microservices for Azure
+  items:
+  - name: Introduction
+    href: index.md
+  - name: Analyze the domain 
+    href: domain-analysis.md
+  - name: Apply tactical DDD patterns
+    href: tactical-ddd.md
+    
