@@ -57,6 +57,8 @@ If we tried to create a single model for both subsystems, drone repair and deliv
 This is where the DDD concept of *bounded contexts* comes into play. A bounded context is simply the boundary within a domain where a particular domain model applies. 
 
 Looking at the previous diagram, we can group functionality according to whether functions should share a single domain model. 
+
+![](./images/ddd2.svg) 
  
 Bounded contexts are not necessarily isolated from one another. The solid lines that connect the bounded contexts represent the places where two bounded contexts interact. For example, Shipping depends on User Accounts to get information about customers, and depends on Drone Management to schedule drones from the fleet.
 
