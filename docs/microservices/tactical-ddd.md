@@ -92,12 +92,11 @@ The development team settled on the following services:
 
 The Delivery Scheduler service also depends on two services from other bounded contexts, namely Accounts and Drone Management. 
 
-
 ## Mapping the tactical patterns to REST APIs
 
-Patterns like entity, aggregate, and value object are designed to place certain constraints on the objects in your domain model. For example, value objects are meant to be immutable. In many discussions of DDD, the patterns are modeled using OO language concepts like constructors
+Patterns like entity, aggregate, and value object are designed to place certain constraints on the objects in your domain model. For example, value objects are meant to be immutable. In many discussions of DDD, the patterns are modeled using OO language concepts like constructors or property getters and setters. 
 
-For example, here is a TypeScript implementation of a value object. The properties are declared to be read-only, so the only way to modify a Location is to create a new one. The properties are validated at the time the object is created.
+For example, here is a TypeScript implementation of a value object. The properties are declared to be read-only, so the only way to modify a Location is to create a new one. The properties are validated when the object is created.
 
 ```ts
 export class Location {
@@ -112,7 +111,6 @@ export class Location {
         if (longitude < -180 || longitude > 180) {
             throw new RangeError('longitude must be between -180 and 180');
         }
-
         this.latitude = latitude;
         this.longitude = longitude;
         this.altitude = altitude;
@@ -120,25 +118,35 @@ export class Location {
 }
 ```
 
+Coding practices like this are particularly important in a more monolithic application. In a large code base, many subsystems might use the `Location` object, so it's important to enforce the correct behaviors of objects. Patterns such as Repository ensure that other parts of the code cannot make arbitrary writes to the data store.
 
+![](./images/repositorty.svg)
 
+But in a microservices architecture, services don't share a code base. Instead, they communicate through APIs. Consider the case where the Delivery Scheduler service requests information about a drone from the Drone Management service. The Drone Management service will have an internal model of a drone, which is represented in code. But the Delivery Scheduler doesn't see that. Instead, what it sees is a wire representation of the entity &mdash; for example, JSON in an HTTP response body.
 
+![](./images/ddd-rest.svg)
 
-Using REST APIs to model DDD concepts
-Aggregates are addressable by ID. The URL is the stable identifier
+As a result, code has a smaller surface area. If the Drone Management service defines a Location class, the scope of that class is limited to the service, making its easier to validate the correct usage. If another service needs to update the drone location, it has to go through the Drone Management service API.
 
+It turns out that RESTful APIs can model many of the tactical DDD concepts.
+
+- Business logic is encapsulated in the API, so the internal state of an aggregate is always consistent. You don't expose APIs that allow clients to manipulate internal state in an inconsistent way.
+
+- Aggregates are addressable by ID. The URL is the stable identifier.
+
+    ```    
     /api/orders/{id}
+    ```
+    
+- Child entities can be navigated from the root, or via links in the representation (following HATEOS principles)
 
-Child entities can be navigated from the root:
-
+    ```    
     /api/orders/{id}/items/{order_item_id}
+    ```    
 
-... or by HATEOS links in the representation
+- Value objects are updated by replacing the entire value through a PUT or PATCH request.
 
-Object properties are essentially value objects, because you update by replacing the value:
-
+    ```    
     PUT /api/customer/{id}/address
-
-(or via PATCH)
-
-Business logic is encapsulated in the API, so the internal state of an aggregate is always consistent. You don't expose APIs that allow clients to manipulate internal state in an inconsistent way.
+    ```    
+ 
