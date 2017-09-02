@@ -130,7 +130,7 @@ As a result, code has a smaller surface area. If the Drone Management service de
 
 It turns out that RESTful APIs can model many of the tactical DDD concepts.
 
-- Business logic is encapsulated in the API, so the internal state of an aggregate is always consistent. You don't expose APIs that allow clients to manipulate internal state in an inconsistent way.
+- Business logic is encapsulated in the API, so the internal state of an aggregate is always consistent. Don't expose APIs that allow clients to manipulate internal state in an inconsistent way. Favor coarse-grained APIs that expose aggregates as resources.
 
 - Aggregates are addressable by ID. The URL is the stable identifier.
 
@@ -149,4 +149,9 @@ It turns out that RESTful APIs can model many of the tactical DDD concepts.
     ```    
     PUT /api/customer/{id}/address
     ```    
- 
+
+- A collection can act like a repository.
+
+    ```    
+    /api/users/{id}/orders/
+    ```

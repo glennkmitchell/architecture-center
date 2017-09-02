@@ -9,4 +9,6 @@
     href: domain-analysis.md
   - name: Apply tactical DDD patterns
     href: tactical-ddd.md
-    
+  - name: Interservice communication
+    href: interservice-communication.md
+  
