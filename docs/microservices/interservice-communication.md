@@ -5,7 +5,6 @@ There are two main ways that services can communicate with other services:
 - **Synchronously** by calling APIs on the service.
 - **Asynchronously** by sending messages. 
 
-AsyMost queue solutions have reliability built-in - guaranteed delivery of durable messages
 
 ## When to use asynchronous message queuing
 
@@ -50,7 +49,7 @@ In some cases, you can mix and match options. For example, by default gRPC uses 
 | &nbsp; | HTTP REST | gRPC | Apache Avro | Apache Thrift |
 |--------|-----------|------|-------------|---------------|
 | **IDL** | OpenAPI | .proto file | Avro schema (JSON) | Thrift IDL |
-| **Serialization** | protocol buffer (default) | JSON, XML, other media types | Binary, JSON | Binary, JSON |
+| **Serialization** | JSON, XML, other media types | protocol buffer (default) | Binary, JSON | Binary, JSON |
 | **Transport** | HTTP/2 | HTTP, HTTP/2 | HTTP | HTTP |
 
 Considerations:
@@ -64,9 +63,5 @@ Considerations:
 - How will you version the APIs and data schemas?
 - If you choose a protocol like gRPC, you may need a protocol translation layer between the public API and the back end. A gateway can perform that function.
 
-Our recommendation is to choose REST over HTTP as a baseline, unless you need the performance of a binary protocol. Advantages of REST over HTTP include: 
-
-- It requires no special libraries. 
-- It is the most decoupled option, because callers do not need a client stub to communicate with the service.
-- It can be used by browser clients, so you don’t need protocol translation between the client and the backend.
+Our recommendation is to choose REST over HTTP as a baseline, unless you need the performance of a binary protocol. REST over HTTP include requires no special libraries. It creates minimal coupling, because callers don't need a client stub to communicate with the service. Finally,it's compatible with browser clients, so you don’t need protocol translation between the client and the backend. However, if you choose this option, you should do performance and load testing early in the development process, to validate whether it is performant for your scenario.
 
