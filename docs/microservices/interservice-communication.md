@@ -6,7 +6,7 @@ There are two main ways that services can communicate with other services:
 - **Asynchronously** by sending messages. 
 
 
-## When to use asynchronous message queuing
+## When to use asynchronous messaging
 
 Asynchronous message queues have some advantages that can be very useful in a microservices architecture.
 
