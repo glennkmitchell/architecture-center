@@ -1,6 +1,6 @@
 # Apply domain driven design 
 
-When designing microservices, one of the biggest challenges in define the exact boundaries of the individual services. The general rule is that a service should do "one thing" &mdash; but putting that rule into practice requires careful thought. 
+When designing microservices, one of the biggest challenges is defining the boundaries of individual services. The general rule is that a service should do "one thing" &mdash; but putting that rule into practice requires careful thought. 
 
 Here are two guiding principles:
 

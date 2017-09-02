@@ -4,7 +4,7 @@ Domain driven design has two distinct phases or aspects: Strategic and tactical.
 
 Tactical DDD provides a set of design patterns that you can use to create the domain model. The patterns are applied within a single bounded context. In a microservices architecture, we are particularly interested in the entity and aggregate patterns. Applying these patterns will help us to identify natural boundaries for the services in our application. As a general principle, a microservice should be no smaller than an aggregate, and no larger than a bounded context. First, we'll review the tactical patterns, then we'll apply them to the Shipping bounded context in the drone delivery application.
 
-## Overview of the patterns
+## Overview of the tactical patterns
 
 If you are already familiar with DDD, you can skip this section. The patterns are described in more detail in *Domain Driven Design* by Eric Evans (see chapters 5 &ndash; 6), and *Implementing Domain-Driven Design* by Vaughn Vernon. This section is only a summary of the patterns.
 
@@ -92,9 +92,9 @@ The development team settled on the following services:
 
 The Delivery Scheduler service also depends on two services from other bounded contexts, namely Accounts and Drone Management. 
 
-## Map tactical patterns to REST APIs
+## How the tactical patterns map to REST
 
-Patterns like entity, aggregate, and value object are designed to place certain constraints on the objects in your domain model. For example, value objects are meant to be immutable. In many discussions of DDD, the patterns are modeled using OO language concepts like constructors or property getters and setters. 
+Patterns such as entity, aggregate, and value object are designed to place certain constraints on the objects in your domain model. For example, value objects are immutable. In many discussions of DDD, the patterns are modeled using OO language concepts like constructors or property getters and setters. 
 
 For example, here is a TypeScript implementation of a value object. The properties are declared to be read-only, so the only way to modify a Location is to create a new one. The properties are validated when the object is created.
 
@@ -118,11 +118,13 @@ export class Location {
 }
 ```
 
-Coding practices like this are particularly important in a more monolithic application. In a large code base, many subsystems might use the `Location` object, so it's important to enforce the correct behaviors of objects. Patterns such as Repository ensure that other parts of the code cannot make arbitrary writes to the data store.
+Coding practices like this are particularly important in a more monolithic application. In a large code base, many subsystems might use the `Location` object, so it's important for the object to enforce correct behavior. 
+
+Another example is the Repository, which ensures that other parts of the code cannot make arbitrary writes to the data store:
 
 ![](./images/repository.svg)
 
-But in a microservices architecture, services don't share a code base. Instead, they communicate through APIs. Consider the case where the Delivery Scheduler service requests information about a drone from the Drone Management service. The Drone Management service will have an internal model of a drone, which is represented in code. But the Delivery Scheduler doesn't see that. Instead, what it sees is a wire representation of the entity &mdash; for example, JSON in an HTTP response body.
+But in a microservices architecture, services don't share a code base and don't share data stores. Instead, they communicate through APIs. Consider the case where the Delivery Scheduler service requests information about a drone from the Drone Management service. The Drone Management service will have an internal model of a drone, which is represented in code. But the Delivery Scheduler doesn't see that. Instead, it receives a wire representation of the entity &mdash; for example, JSON in an HTTP response body.
 
 ![](./images/ddd-rest.svg)
 
@@ -132,7 +134,7 @@ It turns out that RESTful APIs can model many of the tactical DDD concepts.
 
 - Business logic is encapsulated in the API, so the internal state of an aggregate is always consistent. Don't expose APIs that allow clients to manipulate internal state in an inconsistent way. Favor coarse-grained APIs that expose aggregates as resources.
 
-- Aggregates are addressable by ID. The URL is the stable identifier.
+- Aggregates are addressable by ID. Aggregates correspond to resources, and the URL is the stable identifier.
 
     ```    
     /api/orders/{id}
@@ -155,3 +157,7 @@ It turns out that RESTful APIs can model many of the tactical DDD concepts.
     ```    
     /api/users/{id}/orders/
     ```
+
+In this guidance, we will focus less on OO coding principles, and put more emphasis on API design.
+
+Next: [Interservice communication](./interservice-communication.md)
