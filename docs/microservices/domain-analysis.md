@@ -12,7 +12,6 @@ Services are *loosely coupled* if you can change one service without requiring o
 However, there is no mechanical process that will produce the "right" design. You have to think deeply about your business domain, requirements, and goals. Moreover, the process is iterative and ongoing. A well-designed architecture will evolve over time. Service boundaries aren't fixed in stone. As the application evolves, you may refactor a service into several smaller services. 
 
 
-
 ## Analyze the domain
 
 Before writing any code, you need a bird's eye view of the entire system that you are creating. Domain driven design (DDD) is an approach to software design that starts by modeling the business domain.  A domain model is an abstract model of the domain. It distills and organizes domain knowledge, and provides a common language for developers and domain experts. 

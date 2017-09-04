@@ -25,9 +25,20 @@ However, there are some tradeoffs with using messages to communicate. Here are s
 - A message queue can become a bottleneck in the system. Each operation requests at least on queue and dequeue operation, and queue semantics generally require some kind of locking inside the messaging infrastructure. If the queue is a managed service, there may be additional latency because the queue endpoint is outside of the cluster’s virtual network. You can mitigate these issues by batching messages, but that complicates the code. 
 - Message queues don't work well for request-response semantics. You need to configure a reply queue, with a message correlation ID.
 
-## API design
+With these considerations in mind, the Fabrikam team 
 
-When you think about designing APIs for a microservice, it's important to distinguish between two types of API:
+- The Delivery Scheduler service exposes a public API. Client applications use this API to schedule, update, or cancel deliveries.
+- The backend services (Accounts, Delivery, Package, Drone Management, and 3rd Party Transporation) expose internal APIs. The Delivery Scheduler service calls these to create or update a delivery request. One reason to use APIs here is that the Delivery Scheduler service requires a response from the downstream services. A failure in any of the downstream services means the entire operation failed. (Later, we'll look at the details of how this workflow is managed.) 
+- The Delivery service also exposes some public APIs that are used by clients to get the status of a delivery and to request delivery notification via text or email. Later, we'll see that a gateway can be used to isolate clients from needing to know which service exposes a particular API. 
+- While a drone is in flight, the Drone Management service sends events about the drone's current location and status. 
+- The Delivery service sends events that describe the status of a delivery, including Created, Rescheduled, InTransit, and DeliveryComplete. The Delivery History service subscribes to these events and stores the history of every delivery. Events make it possible for any interested service to subscribe to status updates. In the current design, the Delivery Service is the only subscriber, but it's possible that other services might need to consume these events. For example, they might be used for a real-time dashboard or a real-time analytics service. Another reason to use events is that it removes the event consumers from the workflow, meaning the Delivery Scheduler does not have to wait on them.    
+
+Notice that delivery events are derived from drone events. For example, when a drone reaches a delivery location and drops off a package, the Delivery service translates this into a DeliveryCompleted event. This is an example of thinking about domain models. As described earlier, Drone Management belongs in a separate bounded context. The drone events convey the physical location of a drone. The delivery events, on the other, represent changes in the status of a delivery, which is a completely different business entity from a drone.
+  
+
+## API design for microservices
+
+When you design APIs for a microservice, it's important to distinguish between two types of API:
 
 - A public API that client applications call. 
 - Backend APIs that are used for interservice communication.
@@ -64,4 +75,41 @@ Considerations:
 - If you choose a protocol like gRPC, you may need a protocol translation layer between the public API and the back end. A gateway can perform that function.
 
 Our recommendation is to choose REST over HTTP as a baseline, unless you need the performance of a binary protocol. REST over HTTP include requires no special libraries. It creates minimal coupling, because callers don't need a client stub to communicate with the service. Finally,it's compatible with browser clients, so you don’t need protocol translation between the client and the backend. However, if you choose this option, you should do performance and load testing early in the development process, to validate whether it is performant for your scenario.
+
+## Designing RESTful APIs for the Shipping bounded context
+
+
+Delivery scheduler
+POST /api/deliveryrequests - Create a delivery request
+	Takes a delivery request 
+{
+  "confirmationRequired": "FingerPrint",
+  "deadline": "string",
+  "deliveryId": "string",
+  "dropOffLocation": "string",
+  "expedited": true,
+  "ownerId": "string",
+  "packages": [
+    {
+      "packageId": "string",
+      "size": "Small"
+    }
+  ],
+  "pickupLocation": "string",
+  "pickupTime": "2017-08-30T20:41:18.615Z"
+}
+
+
+DELETE /api/deliveryrequests/{id} - Cancel a delivery
+PATCH /api/deliveryrequests/{id} - Reschedule a delivery
+
+Delivery service
+GET /api/Deliveries/{id}
+DELETE /api/Deliveries/{id}
+PATCH /api/Deliveries/{id}
+GET /api/Deliveries/{id}/owner
+GET /api/Deliveries/{id}/status
+POST /api/Deliveries
+POST /api/Deliveries/{id}/notifymerequests - Sign up for notifications 
+POST /api/Deliveries/{id}/confirmations
 
