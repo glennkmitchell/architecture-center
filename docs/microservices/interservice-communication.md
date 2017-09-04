@@ -37,7 +37,7 @@ With these considerations in mind, the Fabrikam team made the following design c
 - The Delivery service sends events that describe the status of a delivery, including Created, Rescheduled, InTransit, and DeliveryComplete. Events make it possible for any interested service to subscribe to status updates. In the current design, the Delivery Service is the only subscriber, but it's possible that other services might need to consume these events. For example, they might be used for a dashboard or real-time analytics service. Another reason to use events is that it removes the consumers from the workflow path, meaning the Delivery Scheduler does not have to wait on them.
 - The Delivery History service subscribes to the delivery events and stores the history of every delivery. 
 
-Notice that delivery events are derived from drone events. For example, when a drone reaches a delivery location and drops off a package, the Delivery service translates this into a DeliveryCompleted event. This is an example of thinking about domain models. As described earlier, Drone Management belongs in a separate bounded context. The drone events convey the physical location of a drone. The delivery events, on the other, represent changes in the status of a delivery, which is a completely different business entity from a drone.
+Notice that delivery events are derived from drone events. For example, when a drone reaches a delivery location and drops off a package, the Delivery service translates this into a DeliveryCompleted event. This is an example of thinking in terms of domain models. As described earlier, Drone Management belongs in a separate bounded context. The drone events convey the physical location of a drone. The delivery events, on the other hand, represent changes in the status of a delivery, which is a different business entity.
   
 
 ## API design for microservices
@@ -57,21 +57,13 @@ Technology choices. You have to consider several aspects of how an API is implem
 
 - **Serialization format**. This defines how are objects are serialized over the wire. Options include JSON and XML, which are text-based, or binary formats such as protocol buffer. 
 
-- **Transport**. The underlying transport protocol is usually either HTTP or HTTP/2.
-
 In some cases, you can mix and match options. For example, by default gRPC uses protocol buffers for serialization, but it can use other formats such as JSON.
-
-| &nbsp; | HTTP REST | gRPC | Apache Avro | Apache Thrift |
-|--------|-----------|------|-------------|---------------|
-| **IDL** | OpenAPI | .proto file | Avro schema (JSON) | Thrift IDL |
-| **Serialization** | JSON, XML, other media types | protocol buffer (default) | Binary, JSON | Binary, JSON |
-| **Transport** | HTTP/2 | HTTP, HTTP/2 | HTTP | HTTP |
 
 Considerations:
 
 - Tradeoffs between a REST-style interface or an RPC-style interface.
 - Does the serialization format require a fixed schema? If so, do you need to compile a schema file?
-- Framework and language support. HTTP is supported in nearly every framework and language. gRPC, Avro, and Thrift all have libraries for C++, C#, Java, and Python. Thrift and gRPC also support Go.
+- Framework and language support. HTTP is supported in nearly every framework and language. gRPC, Avro, and Thrift all have libraries for C++, C#, Java, and Python. Thrift and gRPC also support Go. 
 - Tooling for generating client code, serializer code, API documentation, etc. 
 - Serialization efficiency in terms of speed, memory, and payload size.
 -  If you are using a service mesh, is the protocol compatible? For example, linkerd has built-in support for gRPC.
