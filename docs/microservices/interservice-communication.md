@@ -72,5 +72,37 @@ Considerations:
 
 Our recommendation is to choose REST over HTTP as a baseline, unless you need the performance of a binary protocol. REST over HTTP requires no special libraries. It creates minimal coupling, because callers don't need a client stub to communicate with the service. Finally, it's compatible with browser clients, so you don’t need a protocol translation layer between the client and the backend. However, if you choose this option, you should do performance and load testing early in the development process, to validate whether it performs well enough for your scenario.
 
-## Designing RESTful APIs
+## Design RESTful APIs
+
+- Promotes loose coupling between client and server.
+- Enforces stateless communication, which improves scalability.
+- Defines a uniform interface based on HTTP verbs, which encourages evolvability.
+
+(See [Representational State Transfer (REST)](http://www.ics.uci.edu/~fielding/pubs/dissertation/rest_arch_style.htm) in *Architectural Styles and the Design of Network-based Software Architectures* by Roy Fielding)
+
+In addition, we've seen how making an API resource-oriented maps well to the tactical DDD patterns of aggegates, entities, and value objects. See [Apply tactical DDD concepts](./tactical-ddd.md)
+
+At this point, the principles of REST over HTTP are well-defined. You may find the following topics useful:
+
+[API design](../best-practices/api-design.md) describes general best practices for designing and versioning a REST API. 
+[API implementation](../best-practices/api-implementation.md) gives specific recommendations for implementing the API. 
+
+
+### Asynchronous operations
+
+### Throttling
+
+### Resource conflicts
+
+### Versioning
+
+### OpenAPI documents
+
+
+•	Give a few examples of best practices (action, error-code, async etc.)
+•	Describe some key design decisions (handling Async requests, return 202)
+•	Use query string for versioning because our URLs are expected to be stable
+•	Use OpenAPI spec to authorize user access
+•	Provide OpenAPI (Swagger) document for clients. Please refer to Benefit -> Easy Consumption from here https://pnp.visualstudio.com/_git/DroneDelivery?path=%2FREADME.md&version=GBfeature%2F5842_Delivery_Service_Messaging_choices&_a=preview
+•	HATEOAS?
 
