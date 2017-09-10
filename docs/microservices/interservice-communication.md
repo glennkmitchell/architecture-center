@@ -12,7 +12,7 @@ Asynchronous message queues have some advantages that can be very useful in a mi
 
 - **Reduced coupling**. The message sender does not need to know about the consumer. 
 - **Multiple subscribers**. Using a pub/sub model, multiple consumers can subscribe to receive events. See [Event-driven architecture style](/azure/architecture/guide/architecture-styles/event-driven).
-- **Failure isolation**. If the consumer goes down, the sender can still continue to send messages. They will be picked up when the consumer recovers. (Depending on the scenario, you may need logic to handle stale messages.)
+- **Failure isolation**. If the consumer goes down, the sender can still continue to send messages. They will be picked up when the consumer recovers. Synchronous calls can create cascading failures. 
 - **Asynchronous operations**. The message sender does not have to wait for the consumer to respond. This is especially useful in a microservices architecture. If there is a chain of service dependencies (service A calls B, which calls C, and so on), waiting on synchronous calls can add unacceptable amounts of latency.
 - **Load leveling**. A queue can act as a buffer to level the workload. 
 - **Workflows**. Queues can be used to manage a workflow, by check-pointing the message after each step in the workflow.
