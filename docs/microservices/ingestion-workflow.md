@@ -78,7 +78,7 @@ This does *not* mean that you should avoid using Event Processor Host. The real 
 
 Our next idea was to copy the messages from Event Hubs over to a Service Bus queue, and then read the messages from Service Bus to process them. This idea may seem contradictory, given that we had already decided not to use Service Bus for ingestion. However, the idea was to leverage the different strengths of each service: Use Event Hubs to absorb spikes of heavy traffic, while taking advantage of the queue semantics in Service Bus to process the workload, using a competing consumer model. Remember that our target for sustained throughput is less than our expected peak load.
  
-With this approach, our proof-of-concept tests were able to achieve about 4K operations per second [NEED ACTUAL NUMBERS HERE]. These tests used mock backend services that did not do any real work, but simply added a fixed amount of latency per service. Note that our performance numbers were much less than the theoretical maximum for Service Bus. Possible reasons for the discrepancy include:
+With this approach, our proof-of-concept implementation achieved about 4K operations per second [NEED ACTUAL NUMBERS HERE]. These tests used mock backend services that did not do any real work, but simply added a fixed amount of latency per service. Note that our performance numbers were much less than the theoretical maximum for Service Bus. Possible reasons for the discrepancy include:
 
 - Not having optimal values for various client parameters, such as the connection pool limit, the degree of parallelization, the prefetch count, and the batch size.
 
@@ -90,23 +90,23 @@ Further load testing might have discovered the root cause and allowed us to reso
 
 ## IotHub React 
 
-IotHub React is an Akka Streams library for reading events from Event Hub. Akka Streams is a stream-based programming framework that implements the Reactive Streams specification. It provides a way to build efficient streaming pipelines, where all streaming operations are performed asynchronously, and the pipeline gracefully handles backpressure. Back pressure occurs when an event source produces events at a faster rate than the downstream consumers can receive them -- which is exactly the situation when the drone delivery system has a spike in traffic.
+[IotHub React](https://github.com/Azure/toketi-iothubreact) is an Akka Streams library for reading events from Event Hub. Akka Streams is a stream-based programming framework that implements the Reactive Streams specification. It provides a way to build efficient streaming pipelines, where all streaming operations are performed asynchronously, and the pipeline gracefully handles backpressure. Back pressure occurs when an event source produces events at a faster rate than the downstream consumers can receive them &mdash; which is exactly the situation when the drone delivery system has a spike in traffic. If backend services go slower, IoTHub React will slow down. If capacity is increased, IoTHub React will push more messages through the pipeline.
+
+Akka Streams is also a very natural programming model for streaming events from Event Hubs. Instead of looping through a batch of events, you define a set of operations on events, and let Akka Streams handle the streaming. 
 
 [Show code here]
 
-IoTHub React uses a different checkpoint strategy than EPH. The checkpoint logic is placed in a stream sink, so streaming doesn't need to stop while you wait for a checkpoint. Also you can configure a timeout and a message count - with a higher count, you won't be checkpointing as often. You can tune this behavior.
+IoTHub React uses a different checkpoint strategy than Event Host Processor. The checkpoint logic resides in a sink, which is the terminating stage in a pipeline. The design of Akka Streams allows the pipeline to continue streaming data while the sink is writing the checkpoint. That means the upstream processing stages don't need to wait on the checkpoint. You can configure chcekpoint to occur after a timeout or after a certain number of messages have been processed. 
+ 
+Considerations for scaling:
 
-Streaming is also a natural programming model - instead of looping through a batch of events, you define an event pipeline. 
-•	Akka Streams provides a load leveling mechanism. If backend services go slower then dispatcher will slow down without stressing backend services. If capacity is increased for backend services then dispatcher will pick more messages from event hub and dispatch more work items.
-
-
-
+- To make it easier to scale out, each instance of the dispatcher service is assigned a single
 
 •	To scale the dispatcher has to be deployed as a statefulsets in kubernetes. Like Deployments, StatefulSets manage Pods that are based on an identical container spec. However, although their specs are the same, the Pods in a StatefulSet are not interchangeable. Each Pod has a persistent identifier that it maintains across any rescheduling. In the case of dispatcher the identifier for the container is the partition id that is assigned to each pod running the workflow. Each pod will execute the messages for its own partition. Pods can overlap on the VM giving a cost effective way to distribute workload in a high density model. This is easy to manage through image updates and deployment cycles. 
+
 •	Customers with higher scale requirements than the number of partitions in event hub, can implement a hashing algorithm in the dispatcher and deploy more than one readers per partition pointing to different storage accounts. The result of this configuration is that multiple readers will pick up messages overlapping among them but will only process the messages that belong to them, according to their hashing algorithm.
+
 •	Correct sizing of nodes and the right density of them in VMS is important aspect on the dispatcher deployment. The dispatcher is memory and thread bound, because of the akka framework. 
-•	When running tests the initial memory and thread footprint is higher because akka will stabilize after a period adjusting down the number of  threads.
-•	It might be desirable to collocate the nodes running the dispatcher on the same VM instead of sharing them with other services servicing backend requests, because those services are CPU bound while the dispatcher pods are IO bound. 
 
 
 
