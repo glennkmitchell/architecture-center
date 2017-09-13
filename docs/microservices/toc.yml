@@ -11,4 +11,7 @@
     href: tactical-ddd.md
   - name: Interservice communication
     href: interservice-communication.md
-  
+  - name: Ingestion and workflow
+    href: ingestion-workflow.md
+  - name: Gateway
+    href: gateway.md
