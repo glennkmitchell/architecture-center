@@ -106,3 +106,7 @@ At this point, the principles of REST over HTTP are well-defined. You may find t
 •	Provide OpenAPI (Swagger) document for clients. Please refer to Benefit -> Easy Consumption from here https://pnp.visualstudio.com/_git/DroneDelivery?path=%2FREADME.md&version=GBfeature%2F5842_Delivery_Service_Messaging_choices&_a=preview
 •	HATEOAS?
 
+
+## Service mesh
+
+TBD

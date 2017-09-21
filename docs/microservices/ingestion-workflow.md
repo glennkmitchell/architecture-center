@@ -108,6 +108,8 @@ Considerations for scaling:
 
 •	Correct sizing of nodes and the right density of them in VMS is important aspect on the dispatcher deployment. The dispatcher is memory and thread bound, because of the akka framework. 
 
+## Handling failures
 
+- 
 
 
