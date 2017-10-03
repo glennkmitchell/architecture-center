@@ -25,7 +25,6 @@ However, there are also tradeoffs when using messages to communicate. Here are s
 - Asynchronous messages don't work well for request-response semantics. 
 - If the messages require *queue semantics*, the queue can become a bottleneck in the system. Each message requires at least one queue oepration and one dequeue operation. Moreoever, queue semantics generally require some kind of locking inside the messaging infrastructure. If the queue is a managed service, there may be additional latency, because the queue is external to the cluster’s virtual network. You can mitigate these issues by batching messages, but that complicates the code. If the messages don't require queue semantics, you might be able to use an event *stream* instead of a queue. For more information, see [Event-driven architectural style](../guide/architecture-styles/event-driven.md).  
 
-
 With these considerations in mind, the Fabrikam team made the following design choices.
 
 ![](./images/communication.svg)
