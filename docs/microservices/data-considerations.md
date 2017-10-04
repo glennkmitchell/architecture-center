@@ -42,7 +42,3 @@ There is no single approach that's correct in all cases, but here are some gener
 
 - A service that sends events should publish a schema that can be used to automate serializing and deserializing events. Consider JSON schema or a framework like [Microsoft Bond](https://github.com/Microsoft/bond). Think about how you will version the event schema. At high scale, events can become a bottleneck on the system, so consider using aggregation or batching to reduce the total load. 
 
-
-
-
-
