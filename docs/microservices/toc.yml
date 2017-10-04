@@ -15,3 +15,5 @@
     href: ingestion-workflow.md
   - name: Gateway
     href: gateway.md
+  - name: Data considerations
+    href: data-considerations.md

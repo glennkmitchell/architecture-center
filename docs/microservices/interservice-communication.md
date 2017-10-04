@@ -1,5 +1,8 @@
 # Interservice communication
 
+![](./images/interservice-communication.png)
+
+
 There are two main ways that services can communicate with other services:
 
 - **Synchronously** by calling APIs on the service.
@@ -97,14 +100,14 @@ At this point, the principles of REST over HTTP are well-defined. You may find t
 
 ### OpenAPI documents
 
-
+<!-- 
 •	Give a few examples of best practices (action, error-code, async etc.)
 •	Describe some key design decisions (handling Async requests, return 202)
 •	Use query string for versioning because our URLs are expected to be stable
 •	Use OpenAPI spec to authorize user access
 •	Provide OpenAPI (Swagger) document for clients. Please refer to Benefit -> Easy Consumption from here https://pnp.visualstudio.com/_git/DroneDelivery?path=%2FREADME.md&version=GBfeature%2F5842_Delivery_Service_Messaging_choices&_a=preview
 •	HATEOAS?
-
+-->
 
 ## Service mesh
 
