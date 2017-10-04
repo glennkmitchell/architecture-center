@@ -2,13 +2,13 @@
 
 This section describes considerations for managing data in a microservices architecture. Some of the main challenges are data integrity, eventual consistency, and master data management.
 
-![](./images/baseline.png)
+![](./images/data-considerations.png)
 
 A basic principle of microservices is that each service manages its own data. Two services should not share a database. A service is responsible for its own private database, which other services cannot access directly.
 
-![](../guide/architecture-styles/images/cqrs-microservices-wrong.png)
-
 The reason for this rule is to avoid tight coupling between services. We want every service to be updated and deployed independently, and sharing a database creates a dependency. If there is a change to the data schema, the change must be coordinated across every service that relies on that database. By isolating each service's data store, we can limit the scope of change, and preserve the agility of truly independent deployments.
+
+![](../guide/architecture-styles/images/cqrs-microservices-wrong.png)
 
 > It's fine for services to share the same physical database server. The problem occurs when services shared the same schema, or read and write to the same set of database tables.
 
