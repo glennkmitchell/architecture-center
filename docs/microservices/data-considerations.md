@@ -1,7 +1,8 @@
 # Data considerations for microservices
 
-![](./images/data-considerations.png)
+This section describes considerations for managing data in a microservices architecture. Some of the main challenges are data integrity, eventual consistency, and master data management.
 
+![](./images/baseline.png)
 
 A basic principle of microservices is that each service manages its own data. Two services should not share a database. A service is responsible for its own private database, which other services cannot access directly.
 
@@ -13,7 +14,7 @@ The reason for this rule is to avoid tight coupling between services. We want ev
 
 A second reason to avoid shared databases is that each service may have its own data models, queries, or read/write patterns. Using a shared database would limit each team's ability to optimize data storage for their particular service. 
 
-This approach naturally leads to [polyglot persistence](https://martinfowler.com/bliki/PolyglotPersistence.html) &mdash; the use of multiple data storage technologies within a single application. One service might require the schema-on-read capabilities of a document database. Another might need the referential integrity provided by an RDBMS. Each team is free to make the best choice for their service. For more about the general principle of polyglot persistence, see [Use the best data store for the job](../guide/design-principles/use-the-best-data-store). 
+This approach naturally leads to [polyglot persistence](https://martinfowler.com/bliki/PolyglotPersistence.html) &mdash; the use of multiple data storage technologies within a single application. One service might require the schema-on-read capabilities of a document database. Another might need the referential integrity provided by an RDBMS. Each team is free to make the best choice for their service. For more about the general principle of polyglot persistence, see [Use the best data store for the job](../guide/design-principles/use-the-best-data-store.md). 
 
 ## Challenges
 
@@ -31,7 +32,7 @@ There is no single approach that's correct in all cases, but here are some gener
 
 - When you need strong consistency guarantees, one service may represent the source of truth for a given entity, which is exposed through an API. Other services might hold their own copy of the data, or a subset of the data, that is eventually consistent with the master data but not considered the source of truth. For example, imagine a customer order service and a recommendation service. The recommendation service might listen to events from the order service, but if a customer requests a refund, it is the order service, not the recommendation service, that has the complete transaction history.
 
-- For transactions, use patterns such as [Scheduler Agent Supervisor](../patterns/scheduler-agent-supervisor) and [Compensating Transaction](../patterns/compensating-transaction) to keep data consistent across several services.  You may need to store an additional piece of data that captures the state of a unit of work that spans multiple services, to avoid partial failure among multiple services. For example, keep a work item on a durable queue while a multi-step transaction is in progress. 
+- For transactions, use patterns such as [Scheduler Agent Supervisor](../patterns/scheduler-agent-supervisor.md) and [Compensating Transaction](../patterns/compensating-transaction.md) to keep data consistent across several services.  You may need to store an additional piece of data that captures the state of a unit of work that spans multiple services, to avoid partial failure among multiple services. For example, keep a work item on a durable queue while a multi-step transaction is in progress. 
 
 - Avoid duplicating data unnecessarily. A service might only need to store a subset of information about a domain entity. For example, in the delivery bounded context, we need to know which customer is associated to a particular delivery. But we don't need the customer's billing address - that's handled in the Accounts bounded context. Thinking carefully about the domain, and using a DDD approach, can help here. 
 
